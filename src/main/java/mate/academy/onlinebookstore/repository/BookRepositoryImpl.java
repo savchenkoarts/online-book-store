@@ -2,22 +2,18 @@ package mate.academy.onlinebookstore.repository;
 
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
-
-    @Autowired
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Override
     public Book save(Book book) {
@@ -52,8 +48,8 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public Optional<Book> findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            Book book = session.get(Book.class, id); // Використовуємо метод Hibernate `get`
-            return Optional.ofNullable(book); // Обертаємо результат у Optional
+            Book book = session.get(Book.class, id);
+            return Optional.ofNullable(book);
         } catch (Exception e) {
             throw new RuntimeException("Can`t find book by id " + id, e);
         }
