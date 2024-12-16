@@ -7,7 +7,6 @@ import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
 import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
 import mate.academy.onlinebookstore.service.BookService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,9 +45,8 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDto> updateBook(@PathVariable Long id,
+    public BookDto updateBook(@PathVariable Long id,
                                               @RequestBody UpdateBookRequestDto updateRequest) {
-        BookDto updatedBook = bookService.updateBook(id, updateRequest);
-        return ResponseEntity.ok(updatedBook);
+        return bookService.updateBook(id, updateRequest);
     }
 }
