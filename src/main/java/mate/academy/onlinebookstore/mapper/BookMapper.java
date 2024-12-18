@@ -1,5 +1,6 @@
 package mate.academy.onlinebookstore.mapper;
 
+import java.util.List;
 import mate.academy.onlinebookstore.config.MapperConfig;
 import mate.academy.onlinebookstore.dto.BookDto;
 import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
@@ -24,4 +25,6 @@ public interface BookMapper {
     @Mapping(target = "coverImage", source = "updateRequest.coverImage")
     @Mapping(target = "deleted", ignore = true)
     Book updateBook(Book book, UpdateBookRequestDto updateRequest);
+
+    List<BookDto> toDtoList(List<Book> books);
 }

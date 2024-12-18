@@ -2,11 +2,14 @@ package mate.academy.onlinebookstore.service;
 
 import java.util.List;
 import mate.academy.onlinebookstore.dto.BookDto;
+import mate.academy.onlinebookstore.dto.BookSearchParametersDto;
 import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
 import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
 
 public interface BookService {
     List<BookDto> getAllBooks();
+
+    List<BookDto> searchBooks(BookSearchParametersDto params);
 
     BookDto getBookById(Long id);
 
