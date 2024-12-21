@@ -9,7 +9,7 @@ import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
 public interface BookService {
     List<BookDto> getAllBooks();
 
-    List<BookDto> searchBooks(BookSearchParametersDto params);
+    List<BookDto> searchBooks(BookSearchParametersDto searchParametersDto);
 
     BookDto getBookById(Long id);
 
