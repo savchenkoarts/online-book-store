@@ -1,0 +1,21 @@
+package mate.academy.onlinebookstore.specification;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import java.util.List;
+import mate.academy.onlinebookstore.model.Book;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SpecificationProvider {
+    public Specification<Book> getSpecification(List<String> params, String fieldName) {
+        if (params == null || params.isEmpty()) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> {
+            CriteriaBuilder.In<String> inPredicate = criteriaBuilder.in(root.get(fieldName));
+            params.forEach(inPredicate::value);
+            return criteriaBuilder.and(inPredicate);
+        };
+    }
+}

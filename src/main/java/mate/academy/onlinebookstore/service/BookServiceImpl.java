@@ -1,14 +1,20 @@
 package mate.academy.onlinebookstore.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.dto.BookDto;
+import mate.academy.onlinebookstore.dto.BookSearchParametersDto;
 import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
 import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
 import mate.academy.onlinebookstore.exception.EntityNotFoundException;
 import mate.academy.onlinebookstore.mapper.BookMapper;
 import mate.academy.onlinebookstore.model.Book;
 import mate.academy.onlinebookstore.repository.BookRepository;
+import mate.academy.onlinebookstore.specification.BookSpecificationProvider;
+import mate.academy.onlinebookstore.specification.SpecificationProvider;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final SpecificationProvider specificationProvider;
+    private final BookSpecificationProvider bookSpecificationProvider;
 
     @Override
     public List<BookDto> getAllBooks() {
@@ -23,6 +31,21 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(bookMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<BookDto> searchBooks(BookSearchParametersDto param) {
+        Map<String, List<String>> paramMap =
+                bookSpecificationProvider.getSearchParametersDto(param);
+        Specification<Book> specification = null;
+        for (Map.Entry<String, List<String>> entry : paramMap.entrySet()) {
+            Specification<Book> sp =
+                    specificationProvider.getSpecification(entry.getValue(), entry.getKey());
+            specification = specification == null ? Specification.where(sp) : specification.and(sp);
+        }
+        Optional.ofNullable(specification).orElseThrow(() -> new EntityNotFoundException(
+                "No books found with search parameters " + param));
+        return bookMapper.toDtoList(bookRepository.findAll(specification));
     }
 
     @Override
