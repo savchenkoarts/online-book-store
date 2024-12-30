@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-not-null-constraint-to-title
+      author: savchenko
+      changes:
+        - addNotNullConstraint:
+            tableName: books
+            columnName: title
+            columnDataType: VARCHAR(255)
