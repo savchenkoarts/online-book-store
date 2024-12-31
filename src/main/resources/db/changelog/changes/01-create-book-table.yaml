@@ -16,6 +16,8 @@ databaseChangeLog:
               - column:
                   name: title
                   type: VARCHAR(255)
+                  constraints:
+                      nullable: false
               - column:
                   name: author
                   type: VARCHAR(255)
@@ -38,3 +40,9 @@ databaseChangeLog:
               - column:
                   name: cover_image
                   type: VARCHAR(255)
+              - column:
+                  name: deleted
+                  type: TINYINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
