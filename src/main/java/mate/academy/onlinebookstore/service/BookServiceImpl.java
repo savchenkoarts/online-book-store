@@ -14,6 +14,7 @@ import mate.academy.onlinebookstore.model.Book;
 import mate.academy.onlinebookstore.repository.BookRepository;
 import mate.academy.onlinebookstore.specification.BookSpecificationProvider;
 import mate.academy.onlinebookstore.specification.SpecificationProvider;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,13 @@ public class BookServiceImpl implements BookService {
     private final BookSpecificationProvider bookSpecificationProvider;
 
     @Override
-    public List<BookDto> getAllBooks(Pageable pageable) {
+    public Page<BookDto> getAllBooks(Pageable pageable) {
         return bookRepository.findAll(pageable)
-                .stream()
-                .map(bookMapper::toDto)
-                .toList();
+                .map(bookMapper::toDto);
     }
 
     @Override
-    public List<BookDto> searchBooks(BookSearchParametersDto param) {
+    public Page<BookDto> searchBooks(BookSearchParametersDto param, Pageable pageable) {
         Map<String, List<String>> paramMap =
                 bookSpecificationProvider.getSearchParametersDto(param);
         Specification<Book> specification = null;
@@ -44,15 +43,17 @@ public class BookServiceImpl implements BookService {
                     specificationProvider.getSpecification(entry.getValue(), entry.getKey());
             specification = specification == null ? Specification.where(sp) : specification.and(sp);
         }
-        Optional.ofNullable(specification).orElseThrow(() -> new EntityNotFoundException(
-                "No books found with search parameters " + param));
-        return bookMapper.toDtoList(bookRepository.findAll(specification));
+        Optional.ofNullable(specification).orElseThrow(() ->
+                new EntityNotFoundException("No books found with search parameters " + param));
+        Page<Book> bookPage = bookRepository.findAll(specification, pageable);
+        return bookPage.map(bookMapper::toDto);
     }
 
     @Override
     public BookDto getBookById(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + id));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Book not found with id: " + id));
         return bookMapper.toDto(book);
     }
 
