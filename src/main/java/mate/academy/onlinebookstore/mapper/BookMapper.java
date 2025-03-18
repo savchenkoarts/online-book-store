@@ -1,9 +1,9 @@
 package mate.academy.onlinebookstore.mapper;
 
 import mate.academy.onlinebookstore.config.MapperConfig;
+import mate.academy.onlinebookstore.dto.BookCreateRequestDto;
 import mate.academy.onlinebookstore.dto.BookDto;
-import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
-import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
+import mate.academy.onlinebookstore.dto.BookUpdateRequestDto;
 import mate.academy.onlinebookstore.model.Book;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,7 +14,7 @@ public interface BookMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    Book toEntity(CreateBookRequestDto bookDto);
+    Book toEntity(BookCreateRequestDto bookDto);
 
     @Mapping(target = "title", source = "updateRequest.title")
     @Mapping(target = "author", source = "updateRequest.author")
@@ -23,5 +23,5 @@ public interface BookMapper {
     @Mapping(target = "description", source = "updateRequest.description")
     @Mapping(target = "coverImage", source = "updateRequest.coverImage")
     @Mapping(target = "deleted", ignore = true)
-    Book updateBook(Book book, UpdateBookRequestDto updateRequest);
+    Book updateBook(Book book, BookUpdateRequestDto updateRequest);
 }

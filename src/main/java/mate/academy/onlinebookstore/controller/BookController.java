@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mate.academy.onlinebookstore.dto.BookCreateRequestDto;
 import mate.academy.onlinebookstore.dto.BookDto;
 import mate.academy.onlinebookstore.dto.BookSearchParametersDto;
-import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
-import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
+import mate.academy.onlinebookstore.dto.BookUpdateRequestDto;
 import mate.academy.onlinebookstore.service.BookService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -49,7 +49,7 @@ public class BookController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create book", description = "Create book")
-    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
+    public BookDto createBook(@RequestBody @Valid BookCreateRequestDto bookDto) {
         return bookService.createBook(bookDto);
     }
 
@@ -63,7 +63,7 @@ public class BookController {
     @PutMapping("/{id}")
     @Operation(summary = "Update book by id", description = "Update book by id")
     public BookDto updateBook(@PathVariable Long id,
-                              @RequestBody @Valid UpdateBookRequestDto updateRequest) {
+                              @RequestBody @Valid BookUpdateRequestDto updateRequest) {
         return bookService.updateBook(id, updateRequest);
     }
 
