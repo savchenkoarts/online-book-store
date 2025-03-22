@@ -1,5 +1,7 @@
 package mate.academy.onlinebookstore.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.dto.UserDto;
@@ -11,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Authentication", description = "Endpoints for user authentication and registration")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
     private final UserService userService;
 
+    @Operation(summary = "Register a new user", description = "Creates a new user account.")
     @PostMapping("/registration")
     public UserDto register(@Valid @RequestBody UserRegistrationRequestDto request)
             throws RegistrationException {
