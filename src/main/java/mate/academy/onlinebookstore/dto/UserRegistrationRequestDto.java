@@ -6,7 +6,6 @@ import mate.academy.onlinebookstore.validation.FieldMatch;
 
 @FieldMatch(first = "password", second = "repeatPassword", message = "Passwords must match")
 public record UserRegistrationRequestDto(
-        Long id,
         @NotBlank
         @Email
         String email,
