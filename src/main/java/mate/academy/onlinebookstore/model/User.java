@@ -2,7 +2,6 @@ package mate.academy.onlinebookstore.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,7 +9,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,23 +26,18 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
     @Column(nullable = false, unique = true)
     private String email;
-    @NotBlank
     @Column(nullable = false)
     private String password;
-    @NotBlank
-    @Column(name = "first_name", nullable = false)
+    @Column(nullable = false)
     private String firstName;
-    @NotBlank
-    @Column(name = "last_name", nullable = false)
+    @Column(nullable = false)
     private String lastName;
-    @Column(name = "shipping_address")
     private String shippingAddress;
-    @Column(name = "is_deleted", nullable = false)
+    @Column(nullable = false)
     private boolean deleted = false;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
