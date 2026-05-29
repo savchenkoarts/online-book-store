@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-users
+      author: savchenko
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: admin@mail.com
+              - column:
+                  name: password
+                  value: $2a$10$R8ufZCzekxPaXBkCDFknQOL4msEw8HAot.KCWI.3F5qD01x9WjQ2C
+              - column:
+                  name: first_name
+                  value: Admin
+              - column:
+                  name: last_name
+                  value: User
+              - column:
+                  name: shipping_address
+                  value: Admin address
+              - column:
+                  name: is_deleted
+                  valueNumeric: 0
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: user@mail.com
+              - column:
+                  name: password
+                  value: $2a$10$R8ufZCzekxPaXBkCDFknQOL4msEw8HAot.KCWI.3F5qD01x9WjQ2C
+              - column:
+                  name: first_name
+                  value: Test
+              - column:
+                  name: last_name
+                  value: User
+              - column:
+                  name: shipping_address
+                  value: User address
+              - column:
+                  name: is_deleted
+                  valueNumeric: 0
+
+        - sql:
+            sql: >
+              INSERT INTO users_roles (user_id, role_id)
+              SELECT u.id, r.id
+              FROM users u
+              JOIN roles r ON r.name = 'ADMIN'
+              WHERE u.email = 'admin@mail.com';
+
+        - sql:
+            sql: >
+              INSERT INTO users_roles (user_id, role_id)
+              SELECT u.id, r.id
+              FROM users u
+              JOIN roles r ON r.name = 'USER'
+              WHERE u.email = 'user@mail.com';
