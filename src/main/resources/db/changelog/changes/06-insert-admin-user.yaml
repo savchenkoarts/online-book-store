@@ -22,7 +22,7 @@ databaseChangeLog:
                   name: shipping_address
                   value: Admin address
               - column:
-                  name: is_deleted
+                  name: deleted
                   valueNumeric: 0
 
         - insert:
@@ -44,7 +44,7 @@ databaseChangeLog:
                   name: shipping_address
                   value: User address
               - column:
-                  name: is_deleted
+                  name: deleted
                   valueNumeric: 0
 
         - sql:

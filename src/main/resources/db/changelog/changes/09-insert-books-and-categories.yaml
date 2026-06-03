@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books-and-categories
+      author: savchenko
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO categories (id, name, description, deleted)
+              VALUES
+              (1, 'Fiction', 'Fiction books', false),
+              (2, 'Fantasy', 'Fantasy books', false);
+
+              INSERT INTO books (
+                  id,
+                  title,
+                  author,
+                  isbn,
+                  price,
+                  description,
+                  cover_image,
+                  deleted
+              )
+              VALUES
+              (
+                  1,
+                  'Sample Book 1',
+                  'Author A',
+                  '9789876543209',
+                  34.99,
+                  'Another sample book description.',
+                  'http://example.com/cover1.jpg',
+                  false
+              ),
+              (
+                  2,
+                  'Sample Book 2',
+                  'Author B',
+                  '9789876543216',
+                  29.99,
+                  'Second sample book description.',
+                  'http://example.com/cover2.jpg',
+                  false
+              ),
+              (
+                  3,
+                  'Sample Book 3',
+                  'Author C',
+                  '9789876543223',
+                  39.99,
+                  'Third sample book description.',
+                  'http://example.com/cover3.jpg',
+                  false
+              ),
+              (
+                  4,
+                  'Sample Book 4',
+                  'Author D',
+                  '9789876543230',
+                  24.99,
+                  'Book without category.',
+                  'http://example.com/cover4.jpg',
+                  false
+              );
+
+              INSERT INTO book_category (book_id, category_id)
+              VALUES
+              (1, 1),
+              (2, 1),
+              (3, 2);

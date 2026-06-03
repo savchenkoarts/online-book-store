@@ -1,18 +1,17 @@
 package mate.academy.onlinebookstore.dto;
 
-import java.util.Set;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-public class BookDto {
+@Setter
+public class BookDtoWithoutCategoryIds {
     private Long id;
     private String title;
     private String author;
     private String isbn;
-    private Double price;
+    private BigDecimal price;
     private String description;
     private String coverImage;
-    private Set<Long> categoryIds;
 }
