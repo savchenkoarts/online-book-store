@@ -1,5 +1,6 @@
 package mate.academy.onlinebookstore.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +12,9 @@ import mate.academy.onlinebookstore.dto.BookUpdateRequestDto;
 import mate.academy.onlinebookstore.exception.EntityNotFoundException;
 import mate.academy.onlinebookstore.mapper.BookMapper;
 import mate.academy.onlinebookstore.model.Book;
+import mate.academy.onlinebookstore.model.Category;
 import mate.academy.onlinebookstore.repository.BookRepository;
+import mate.academy.onlinebookstore.repository.CategoryRepository;
 import mate.academy.onlinebookstore.specification.BookSpecificationProvider;
 import mate.academy.onlinebookstore.specification.SpecificationProvider;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final SpecificationProvider specificationProvider;
     private final BookSpecificationProvider bookSpecificationProvider;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public Page<BookDto> getAllBooks(Pageable pageable) {
@@ -60,6 +64,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto createBook(BookCreateRequestDto bookCreateRequestDto) {
         Book book = bookMapper.toEntity(bookCreateRequestDto);
+        if (bookCreateRequestDto.categoryIds() != null) {
+            List<Category> categories = categoryRepository
+                    .findAllById(bookCreateRequestDto.categoryIds());
+            book.setCategories(new HashSet<>(categories));
+        }
         bookRepository.save(book);
         return bookMapper.toDto(book);
     }
