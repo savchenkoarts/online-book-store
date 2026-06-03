@@ -38,8 +38,8 @@ databaseChangeLog:
                   name: shipping_address
                   type: VARCHAR(255)
               - column:
-                  name: deleted
-                  type: boolean
-                  defaultValueBoolean: false
+                  name: is_deleted
+                  type: TINYINT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false

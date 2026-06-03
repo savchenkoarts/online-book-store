@@ -16,14 +16,14 @@ import org.hibernate.annotations.Where;
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@Where(clause = "is_deleted=false")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
     private String description;
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean isDeleted = false;
 }

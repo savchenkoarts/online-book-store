@@ -6,7 +6,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.dto.BookDtoWithoutCategoryIds;
+import mate.academy.onlinebookstore.dto.CategoryCreateRequestDto;
 import mate.academy.onlinebookstore.dto.CategoryDto;
+import mate.academy.onlinebookstore.dto.CategoryUpdateRequestDto;
 import mate.academy.onlinebookstore.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,8 +33,9 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create category", description = "Create category")
-    public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
-        return categoryService.save(categoryDto);
+    public CategoryDto createCategory(
+            @RequestBody @Valid CategoryCreateRequestDto requestDto) {
+        return categoryService.save(requestDto);
     }
 
     @GetMapping
@@ -52,9 +55,10 @@ public class CategoryController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update category by id", description = "Update category by id")
-    public CategoryDto updateCategory(@PathVariable Long id,
-                                      @RequestBody @Valid CategoryDto categoryDto) {
-        return categoryService.update(id, categoryDto);
+    public CategoryDto updateCategory(
+            @PathVariable Long id,
+            @RequestBody @Valid CategoryUpdateRequestDto requestDto) {
+        return categoryService.update(id, requestDto);
     }
 
     @DeleteMapping("/{id}")

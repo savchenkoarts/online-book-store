@@ -5,7 +5,7 @@ databaseChangeLog:
       changes:
         - sql:
             sql: |
-              INSERT INTO categories (id, name, description, deleted)
+              INSERT INTO categories (id, name, description, is_deleted)
               VALUES
               (1, 'Fiction', 'Fiction books', false),
               (2, 'Fantasy', 'Fantasy books', false);
@@ -18,7 +18,7 @@ databaseChangeLog:
                   price,
                   description,
                   cover_image,
-                  deleted
+                  is_deleted
               )
               VALUES
               (
@@ -62,7 +62,7 @@ databaseChangeLog:
                   false
               );
 
-              INSERT INTO book_category (book_id, category_id)
+              INSERT INTO books_categories (book_id, category_id)
               VALUES
               (1, 1),
               (2, 1),
