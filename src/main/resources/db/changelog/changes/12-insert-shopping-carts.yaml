@@ -5,7 +5,7 @@ databaseChangeLog:
       changes:
         - sql:
             sql: >
-              INSERT INTO shopping_carts (user_id, is_deleted)
+              INSERT INTO shopping_carts (id, is_deleted)
               SELECT id, 0
               FROM users
               WHERE email IN ('admin@mail.com', 'user@mail.com');

@@ -10,6 +10,7 @@ import mate.academy.onlinebookstore.mapper.ShoppingCartMapper;
 import mate.academy.onlinebookstore.model.Book;
 import mate.academy.onlinebookstore.model.CartItem;
 import mate.academy.onlinebookstore.model.ShoppingCart;
+import mate.academy.onlinebookstore.model.User;
 import mate.academy.onlinebookstore.repository.BookRepository;
 import mate.academy.onlinebookstore.repository.CartItemRepository;
 import mate.academy.onlinebookstore.repository.ShoppingCartRepository;
@@ -58,9 +59,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     ) {
         ShoppingCart shoppingCart = getCartByUserId(userId);
 
-        CartItem cartItem = shoppingCart.getCartItems().stream()
-                .filter(item -> item.getId().equals(cartItemId))
-                .findFirst()
+        CartItem cartItem = cartItemRepository
+                .findByIdAndShoppingCartId(cartItemId, shoppingCart.getId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Cart item not found with id: " + cartItemId));
 
@@ -74,9 +74,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public void deleteCartItem(Long userId, Long cartItemId) {
         ShoppingCart shoppingCart = getCartByUserId(userId);
 
-        CartItem cartItem = shoppingCart.getCartItems().stream()
-                .filter(item -> item.getId().equals(cartItemId))
-                .findFirst()
+        CartItem cartItem = cartItemRepository
+                .findByIdAndShoppingCartId(cartItemId, shoppingCart.getId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Cart item not found with id: " + cartItemId));
 
@@ -88,5 +87,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Shopping cart not found for user id: " + userId));
+    }
+
+    @Override
+    public void createShoppingCart(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
     }
 }
