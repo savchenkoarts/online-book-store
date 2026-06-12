@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-shopping-carts
+      author: savchenko
+      changes:
+        - sql:
+            sql: >
+              INSERT INTO shopping_carts (id, is_deleted)
+              SELECT id, 0
+              FROM users
+              WHERE email IN ('admin@mail.com', 'user@mail.com');
