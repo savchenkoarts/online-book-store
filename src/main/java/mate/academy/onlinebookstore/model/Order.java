@@ -46,10 +46,10 @@ public class Order {
     @Column(nullable = false)
     private BigDecimal total;
 
-    @Column(name = "order_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime orderDate;
 
-    @Column(name = "shipping_address", nullable = false)
+    @Column(nullable = false)
     private String shippingAddress;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -57,6 +57,6 @@ public class Order {
     @EqualsAndHashCode.Exclude
     private Set<OrderItem> orderItems = new HashSet<>();
 
-    @Column(name = "is_deleted", nullable = false)
+    @Column(nullable = false)
     private boolean isDeleted = false;
 }

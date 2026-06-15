@@ -9,6 +9,7 @@ import mate.academy.onlinebookstore.dto.OrderDto;
 import mate.academy.onlinebookstore.dto.OrderItemDto;
 import mate.academy.onlinebookstore.dto.UpdateOrderStatusRequestDto;
 import mate.academy.onlinebookstore.exception.EntityNotFoundException;
+import mate.academy.onlinebookstore.exception.OrderProcessingException;
 import mate.academy.onlinebookstore.mapper.OrderItemMapper;
 import mate.academy.onlinebookstore.mapper.OrderMapper;
 import mate.academy.onlinebookstore.model.CartItem;
@@ -39,9 +40,9 @@ public class OrderServiceImpl implements OrderService {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Shopping cart not found for user id: " + userId));
-
         if (shoppingCart.getCartItems().isEmpty()) {
-            throw new EntityNotFoundException("Shopping cart is empty");
+            throw new OrderProcessingException(
+                    "Shopping cart is empty for user id: " + userId);
         }
 
         Order order = new Order();
@@ -49,24 +50,17 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Status.PENDING);
         order.setOrderDate(LocalDateTime.now());
         order.setShippingAddress(requestDto.shippingAddress());
-
         BigDecimal total = shoppingCart.getCartItems().stream()
                 .map(cartItem -> cartItem.getBook().getPrice()
                         .multiply(BigDecimal.valueOf(cartItem.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         order.setTotal(total);
-
         shoppingCart.getCartItems().forEach(cartItem -> {
             OrderItem orderItem = createOrderItem(order, cartItem);
             order.getOrderItems().add(orderItem);
         });
-
         Order savedOrder = orderRepository.save(order);
-
-        cartItemRepository.deleteAll(shoppingCart.getCartItems());
         shoppingCart.getCartItems().clear();
-
         return orderMapper.toDto(savedOrder);
     }
 
@@ -90,7 +84,6 @@ public class OrderServiceImpl implements OrderService {
                 .findByIdAndOrderIdAndOrderUserId(itemId, orderId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Order item not found with id: " + itemId));
-
         return orderItemMapper.toDto(orderItem);
     }
 
@@ -100,9 +93,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Order not found with id: " + orderId));
-
         order.setStatus(requestDto.status());
-
         return orderMapper.toDto(orderRepository.save(order));
     }
 
