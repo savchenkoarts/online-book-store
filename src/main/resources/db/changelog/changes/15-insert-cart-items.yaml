@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-cart-items
+      author: savchenko
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO cart_items (shopping_cart_id, book_id, quantity)
+              SELECT sc.id, 1, 2
+              FROM shopping_carts sc
+              JOIN users u ON sc.id = u.id
+              WHERE u.email = 'user@mail.com';
