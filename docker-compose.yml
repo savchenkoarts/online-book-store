@@ -21,7 +21,7 @@ services:
       - mysql
     ports:
       - "${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}"
-      - "${DEBUG_PORT}:5005"
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
     environment:
       MYSQLDB_HOST: mysql
       MYSQLDB_PORT: ${MYSQLDB_DOCKER_PORT}
