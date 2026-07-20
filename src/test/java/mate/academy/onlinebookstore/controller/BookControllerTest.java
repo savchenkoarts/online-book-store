@@ -11,8 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import mate.academy.onlinebookstore.dto.BookCreateRequestDto;
 import mate.academy.onlinebookstore.dto.BookDto;
+import mate.academy.onlinebookstore.exception.CustomGlobalExceptionHandler;
+import mate.academy.onlinebookstore.exception.EntityNotFoundException;
 import mate.academy.onlinebookstore.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +35,6 @@ class BookControllerTest {
 
     @Mock
     private BookService bookService;
-
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
@@ -40,24 +42,23 @@ class BookControllerTest {
     void setUp() {
         BookController bookController =
                 new BookController(bookService);
-
         mockMvc = MockMvcBuilders
                 .standaloneSetup(bookController)
+                .setControllerAdvice(new CustomGlobalExceptionHandler())
                 .setCustomArgumentResolvers(
                         new PageableHandlerMethodArgumentResolver())
                 .build();
-
         objectMapper = new ObjectMapper();
     }
 
     @Test
     void getAll_ExistingBooks_ReturnsPage() throws Exception {
-        var pageable = PageRequest.of(0, 10,
+        var pageable = PageRequest.of(
+                0,
+                10,
                 Sort.by("title").ascending()
         );
-
         BookDto dto = bookDto(1L, "Clean Code");
-
         when(bookService.getAllBooks(pageable))
                 .thenReturn(new PageImpl<>(
                         List.of(dto),
@@ -68,7 +69,11 @@ class BookControllerTest {
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].title")
-                        .value("Clean Code"));
+                        .value("Clean Code"))
+                .andExpect(jsonPath("$.content[0].author")
+                        .value("Robert Martin"))
+                .andExpect(jsonPath("$.content[0].isbn")
+                        .value("9780132350884"));
     }
 
     @Test
@@ -88,18 +93,28 @@ class BookControllerTest {
     }
 
     @Test
+    void getBookById_NotFound_Returns404() throws Exception {
+        when(bookService.getBookById(99L))
+                .thenThrow(new EntityNotFoundException(
+                    "Book not found with id: 99"));
+        mockMvc.perform(get("/books/99"))
+                .andExpect(status().isNotFound());
+        verify(bookService)
+                .getBookById(99L);
+    }
+
+    @Test
     void createBook_ValidRequest_ReturnsCreatedBook() throws Exception {
         BookCreateRequestDto request =
                 new BookCreateRequestDto(
-                        "Clean Code",
-                        "Robert Martin",
-                        "9780132350884",
-                        BigDecimal.valueOf(35),
-                        null,
-                        null,
-                        List.of(1L)
-                );
-
+                    "Clean Code",
+                    "Robert Martin",
+                    "9780132350884",
+                    BigDecimal.valueOf(35),
+                    null,
+                    null,
+                    List.of(1L)
+            );
         when(bookService.createBook(request))
                 .thenReturn(bookDto(1L, "Clean Code"));
 
@@ -108,8 +123,11 @@ class BookControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title")
-                        .value("Clean Code"));
-
+                        .value("Clean Code"))
+                .andExpect(jsonPath("$.author")
+                        .value("Robert Martin"))
+                .andExpect(jsonPath("$.isbn")
+                        .value("9780132350884"));
         verify(bookService)
                 .createBook(request);
     }
@@ -118,7 +136,6 @@ class BookControllerTest {
     void deleteBook_ExistingBook_ReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/books/1"))
                 .andExpect(status().isNoContent());
-
         verify(bookService)
                 .deleteById(1L);
     }
@@ -127,6 +144,12 @@ class BookControllerTest {
         BookDto dto = new BookDto();
         dto.setId(id);
         dto.setTitle(title);
+        dto.setAuthor("Robert Martin");
+        dto.setIsbn("9780132350884");
+        dto.setPrice(35.0);
+        dto.setDescription("Programming book");
+        dto.setCoverImage("cover.jpg");
+        dto.setCategoryIds(Set.of(1L));
         return dto;
     }
 }

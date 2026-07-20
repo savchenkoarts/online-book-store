@@ -30,7 +30,6 @@ class CategoryControllerTest {
 
     @Mock
     private CategoryService categoryService;
-
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 

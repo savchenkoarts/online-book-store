@@ -2,33 +2,29 @@ package mate.academy.onlinebookstore.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import mate.academy.onlinebookstore.model.Category;
+import mate.academy.onlinebookstore.config.TestcontainersConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
-@DataJpaTest(properties = {
-        "spring.liquibase.enabled=false",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
-})
+@DataJpaTest
+@Import(TestcontainersConfiguration.class)
+@Sql("classpath:test-data.sql")
 class CategoryRepositoryTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
 
     @Test
-    void save_WithValidCategory_PersistsCategory() {
-        Category category = new Category();
-        category.setName("Fiction");
-        category.setDescription("Fiction books");
+    void findById_WithExistingCategory_ReturnsCategory() {
+        var actual = categoryRepository.findById(3L);
 
-        Category actual = categoryRepository.saveAndFlush(category);
-
-        assertThat(actual.getId()).isNotNull();
-
-        assertThat(categoryRepository.findById(actual.getId()))
-                .hasValueSatisfying(saved ->
-                        assertThat(saved.getName())
-                                .isEqualTo("Fiction"));
+        assertThat(actual)
+                .isPresent()
+                .hasValueSatisfying(category ->
+                        assertThat(category.getName())
+                                .isEqualTo("Testing"));
     }
 }

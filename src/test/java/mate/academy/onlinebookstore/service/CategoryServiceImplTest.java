@@ -49,7 +49,13 @@ class CategoryServiceImplTest {
     @Test
     void findAll_ExistingCategories_ReturnsMappedDtos() {
         Category category = new Category();
+        category.setName("Fiction");
+        category.setDescription("Fiction books");
+
         CategoryDto dto = new CategoryDto();
+        dto.setId(1L);
+        dto.setName("Fiction");
+        dto.setDescription("Fiction books");
 
         when(categoryRepository.findAll())
                 .thenReturn(List.of(category));
@@ -60,7 +66,13 @@ class CategoryServiceImplTest {
         List<CategoryDto> actual = categoryService.findAll();
 
         assertThat(actual)
-                .containsExactly(dto);
+                .hasSize(1);
+
+        assertThat(actual.get(0).getName())
+                .isEqualTo("Fiction");
+
+        assertThat(actual.get(0).getDescription())
+                .isEqualTo("Fiction books");
 
         verify(categoryRepository)
                 .findAll();
@@ -72,7 +84,13 @@ class CategoryServiceImplTest {
     @Test
     void getById_ExistingCategory_ReturnsDto() {
         Category category = new Category();
+        category.setName("Fiction");
+        category.setDescription("Fiction books");
+
         CategoryDto dto = new CategoryDto();
+        dto.setId(1L);
+        dto.setName("Fiction");
+        dto.setDescription("Fiction books");
 
         when(categoryRepository.findById(1L))
                 .thenReturn(Optional.of(category));
@@ -82,8 +100,11 @@ class CategoryServiceImplTest {
 
         CategoryDto actual = categoryService.getById(1L);
 
-        assertThat(actual)
-                .isSameAs(dto);
+        assertThat(actual.getName())
+                .isEqualTo("Fiction");
+
+        assertThat(actual.getDescription())
+                .isEqualTo("Fiction books");
 
         verify(categoryRepository)
                 .findById(1L);
@@ -107,14 +128,20 @@ class CategoryServiceImplTest {
 
     @Test
     void save_ValidRequest_ReturnsSavedCategory() {
-        CategoryCreateRequestDto request =
+        final CategoryCreateRequestDto request =
                 new CategoryCreateRequestDto(
                         "Fiction",
                         "Fiction books"
                 );
 
         Category category = new Category();
+        category.setName("Fiction");
+        category.setDescription("Fiction books");
+
         CategoryDto dto = new CategoryDto();
+        dto.setId(1L);
+        dto.setName("Fiction");
+        dto.setDescription("Fiction books");
 
         when(categoryMapper.toEntity(request))
                 .thenReturn(category);
@@ -127,8 +154,11 @@ class CategoryServiceImplTest {
 
         CategoryDto actual = categoryService.save(request);
 
-        assertThat(actual)
-                .isSameAs(dto);
+        assertThat(actual.getName())
+                .isEqualTo("Fiction");
+
+        assertThat(actual.getDescription())
+                .isEqualTo("Fiction books");
 
         verify(categoryRepository)
                 .save(category);
@@ -136,14 +166,20 @@ class CategoryServiceImplTest {
 
     @Test
     void update_ExistingCategory_MapsAndSavesCategory() {
-        CategoryUpdateRequestDto request =
+        final CategoryUpdateRequestDto request =
                 new CategoryUpdateRequestDto(
                         "Novels",
                         "Novel books"
                 );
 
         Category category = new Category();
+        category.setName("Novels");
+        category.setDescription("Novel books");
+
         CategoryDto dto = new CategoryDto();
+        dto.setId(1L);
+        dto.setName("Novels");
+        dto.setDescription("Novel books");
 
         when(categoryRepository.findById(1L))
                 .thenReturn(Optional.of(category));
@@ -156,8 +192,11 @@ class CategoryServiceImplTest {
 
         CategoryDto actual = categoryService.update(1L, request);
 
-        assertThat(actual)
-                .isSameAs(dto);
+        assertThat(actual.getName())
+                .isEqualTo("Novels");
+
+        assertThat(actual.getDescription())
+                .isEqualTo("Novel books");
 
         verify(categoryMapper)
                 .updateCategoryFromDto(request, category);
@@ -169,8 +208,10 @@ class CategoryServiceImplTest {
     @Test
     void getBooksByCategoryId_MatchingBook_ReturnsMappedBooks() {
         Book book = new Book();
+
         BookDtoWithoutCategoryIds dto =
                 new BookDtoWithoutCategoryIds();
+        dto.setTitle("Clean Code");
 
         when(bookRepository.findAllByCategoriesId(1L))
                 .thenReturn(List.of(book));
@@ -182,7 +223,10 @@ class CategoryServiceImplTest {
                 categoryService.getBooksByCategoryId(1L);
 
         assertThat(actual)
-                .containsExactly(dto);
+                .hasSize(1);
+
+        assertThat(actual.get(0).getTitle())
+                .isEqualTo("Clean Code");
 
         verify(bookRepository)
                 .findAllByCategoriesId(1L);
@@ -194,7 +238,6 @@ class CategoryServiceImplTest {
     @Test
     void deleteById_ExistingId_DelegatesToRepository() {
         categoryService.deleteById(1L);
-
         verify(categoryRepository)
                 .deleteById(1L);
     }
